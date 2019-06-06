@@ -75,18 +75,16 @@ def _background_process(command):
     finally:
         _kill_process(process.pid)
 
-def destroy():
+def destroy(vars_file):
     gcp_dir = os.path.join(_dir, "terraform/")
-    vars_file = os.path.join(_dir, "environments/steven-gcp.tfvars")
     # this is needed to create the let's encrypt cert
     outputs = run_terraform(gcp_dir,
                             vars_file,
                             target="module.astronomer_gcp",
                             destroy=True)
 
-def apply():
+def apply(vars_file):
     gcp_dir = os.path.join(_dir, "terraform/")
-    vars_file = os.path.join(_dir, "environments/steven-gcp.tfvars")
 
     environment = {
         "GOOGLE_APPLICATION_CREDENTIALS": os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
@@ -119,8 +117,16 @@ def apply():
                                 target="module.astronomer",
                                 environment=environment)
 
-if __name__ == "__main__":
+def main():
+    vars_file = input("path to vars file: ")
+    vars_file = os.path.realpath(vars_file)
+    assert os.path.isfile(vars_file)
+
     if "--destroy" in sys.argv:
-        destroy()
+        destroy(vars_file)
     else:
-        apply()
+        apply(vars_file)
+
+if __name__ == "__main__":
+    main()
+
