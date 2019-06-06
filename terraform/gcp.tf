@@ -1,7 +1,9 @@
 module "astronomer" {
-  source  = "./terraform-kubernetes-astronomer"
-  #source  = "astronomer/astronomer/kubernetes"
-  #version = "0.0.1"
+  # you can do it like this for development
+  # just comment out version, source
+  # source  = "./terraform-kubernetes-astronomer"
+  source  = "astronomer/astronomer/kubernetes"
+  version = "0.0.2"
   admin_email = "${var.email}"
   base_domain = "${module.astronomer_gcp.base_domain}"
   db_connection_string = "${module.astronomer_gcp.db_connection_string}"
