@@ -1,2 +1,5 @@
 kubeconfig
 *.tfvars
+terraform-kubernetes-astronomer/*
+terraform-kubernetes-astronomer
+.helm/*

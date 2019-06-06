@@ -1,6 +1,7 @@
 module "astronomer" {
-  source  = "astronomer/astronomer/kubernetes"
-  version = "0.0.1"
+  source  = "./terraform-kubernetes-astronomer"
+  #source  = "astronomer/astronomer/kubernetes"
+  #version = "0.0.1"
   admin_email = "${var.email}"
   base_domain = "${module.astronomer_gcp.base_domain}"
   db_connection_string = "${module.astronomer_gcp.db_connection_string}"
@@ -10,7 +11,7 @@ module "astronomer" {
 
 module "astronomer_gcp" {
   source  = "astronomer/astronomer-gcp/google"
-  version = "0.1.3"
+  version = "0.1.7"
   bastion_admin_emails = ["${var.email}"]
   bastion_user_emails = ["${var.email}"]
   deployment_id = "${var.deployment_id}"

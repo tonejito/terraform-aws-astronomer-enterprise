@@ -26,7 +26,7 @@ provider "tls" {
 }
 
 provider "kubernetes" {
-  config_path = "${local_file.kubeconfig.filename}"
+  config_path = "${path.module}/kubeconfig"
   load_config_file = true
 }
 
@@ -34,7 +34,8 @@ provider "helm" {
   service_account = "tiller"
   debug           = true
   kubernetes {
-    config_path = "${local_file.kubeconfig.filename}"
+    config_path = "${path.module}/kubeconfig"
+    # config_path = "${local_file.kubeconfig.filename}"
     load_config_file = true
   }
 }
