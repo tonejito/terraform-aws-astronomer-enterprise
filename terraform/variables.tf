@@ -22,7 +22,3 @@ variable "acme_server" {
   default = "https://acme-v02.api.letsencrypt.org/directory"
   type = "string"
 }
-variable "proxy_port" {
-  default = "1234"
-  type = "string"
-}

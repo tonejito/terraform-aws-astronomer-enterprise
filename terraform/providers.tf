@@ -25,6 +25,9 @@ provider "tls" {
   version = "~> 2.0"
 }
 
+provider "null" {
+}
+
 provider "kubernetes" {
   config_path = "${path.module}/kubeconfig"
   load_config_file = true
@@ -32,7 +35,8 @@ provider "kubernetes" {
 
 provider "helm" {
   service_account = "tiller"
-  debug           = true
+  namespace       = "kube-system"
+  install_tiller  = true
   kubernetes {
     config_path = "${path.module}/kubeconfig"
     # config_path = "${local_file.kubeconfig.filename}"

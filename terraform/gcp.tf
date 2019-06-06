@@ -7,16 +7,17 @@ module "astronomer" {
   db_connection_string = "${module.astronomer_gcp.db_connection_string}"
   tls_cert = "${module.astronomer_gcp.tls_cert}"
   tls_key = "${module.astronomer_gcp.tls_key}"
+  cluster_type = "public"
+  enable_istio = "true"
 }
 
 module "astronomer_gcp" {
   source  = "astronomer/astronomer-gcp/google"
-  version = "0.1.7"
+  version = "0.2.2"
   bastion_admin_emails = ["${var.email}"]
   bastion_user_emails = ["${var.email}"]
   deployment_id = "${var.deployment_id}"
   dns_managed_zone = "${var.dns_managed_zone}"
-  proxy_port = "${var.proxy_port}"
   project = "${var.project}"
 }
 

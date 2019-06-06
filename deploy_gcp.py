@@ -11,19 +11,20 @@ from contextlib import contextmanager
 # this is the directory of this file
 _dir = os.path.dirname(os.path.realpath(__file__))
 
-def read_outputs_from_tfstate(path):
+def read_outputs_from_tfstate(state_path):
     ''' Parse TF state to find the
-    outputs of the root module
+    outputs of all modules
     '''
-    with open(path, "r") as state_file:
+    with open(state_path, "r") as state_file:
         tfstate = json.loads(state_file.read())
 
     modules = tfstate["modules"]
+    # apply root level outputs with highest priority
+    modules.reverse()
     outputs = {}
-    # root
-    module = modules[0]
-    for key, value in module["outputs"].items():
-        outputs[key] = value["value"]
+    for module in modules:
+        for key, value in module["outputs"].items():
+            outputs[key] = value["value"]
     return outputs
 
 def run_terraform(terraform_directory,
@@ -31,7 +32,8 @@ def run_terraform(terraform_directory,
                   target=None,
                   environment={},
                   state_path=None,
-                  destroy=False):
+                  destroy=False,
+                  refresh=False):
     if not state_path:
         state_path = os.path.join(_dir, "terraform.tfstate")
     subprocess.run("terraform init", cwd=terraform_directory, check=True, shell=True)
@@ -39,6 +41,8 @@ def run_terraform(terraform_directory,
                "apply",
                "--auto-approve",
                f"-var-file={variables_file}"]
+    if not refresh:
+        command.append("-refresh=false")
     if destroy:
         command[1] = "destroy"
     if target:
@@ -83,12 +87,23 @@ def destroy():
 def apply():
     gcp_dir = os.path.join(_dir, "terraform/")
     vars_file = os.path.join(_dir, "environments/steven-gcp.tfvars")
-    # this is needed to create the let's encrypt cert
+
+    environment = {
+        "GOOGLE_APPLICATION_CREDENTIALS": os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+    }
+
+    outputs = run_terraform(gcp_dir,
+                            vars_file,
+                            target="module.astronomer_gcp",
+                            environment=environment,
+                            refresh=True)
+    proxy_command = outputs['bastion_proxy_command']
+
     outputs = run_terraform(gcp_dir,
                             vars_file,
                             target="local_file.kubeconfig")
 
-    pprint(outputs)
+    # pprint(outputs)
     environment = {
         # "https_proxy": f"http://127.0.0.1:{outputs['proxy_port']}"
         "https_proxy": f"http://127.0.0.1:1234",
@@ -98,7 +113,7 @@ def apply():
         "HELM_HOME": os.path.realpath(os.path.join(_dir,".helm")),
         "KUBECONFIG": os.path.join(gcp_dir,"kubeconfig")
     }
-    with _background_process(outputs['bastion_socks5_proxy_command']):
+    with _background_process(proxy_command):
         outputs = run_terraform(gcp_dir,
                                 vars_file,
                                 target="module.astronomer",

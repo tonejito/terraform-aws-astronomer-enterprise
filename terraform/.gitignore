@@ -3,3 +3,4 @@ kubeconfig
 terraform-kubernetes-astronomer/*
 terraform-kubernetes-astronomer
 .helm/*
+.kube/*
