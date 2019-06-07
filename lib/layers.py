@@ -13,12 +13,13 @@ class EnvironmentError(RuntimeError):
     pass
 
 class TerraformTarget():
-    def __init__(self, target, varsfile, statefile):
+    def __init__(self, target, varsfile, statefile, terraform_directory):
         '''
         '''
         self.target = target
         self.varsfile = varsfile
         self.statefile = statefile
+        self.terraform_directory = terraform_directory
 
     def apply(self, refresh=True, environment={}):
         ''' Initialize Terraform
@@ -28,7 +29,7 @@ class TerraformTarget():
         by the extending class.
         '''
         subprocess.run("terraform init",
-                       cwd=self._terraform_directory,
+                       cwd=self.terraform_directory,
                        check=True,
                        shell=True)
         command = ["terraform",
@@ -45,30 +46,22 @@ class TerraformTarget():
         command = " ".join(command)
         print(f"Running command:\n{command}")
         subprocess.run(command,
-                       cwd=self._terraform_directory,
+                       cwd=self.terraform_directory,
                        env=environment,
                        check=True,
                        shell=True)
         return self._outputs
 
     @property
-    def _terraform_directory(self):
-        ''' Defaults to:
-        <git_root>/terraform
-        '''
-        return os.path.join(
-            git_root(),
-            "terraform")
-
-    @property
     def _outputs(self):
-        raise NotImplementedError()
-
-    def _get_output(self, output):
-        ''' Parse TF state to find the
-        specific output of this target
+        ''' by default, return all
         '''
-        print(f"getting {output} from {self.target} from the file {self.statefile}")
+        return self._get_output()
+
+    def _get_output(self):
+        ''' Parse TF state to find the
+        outputs of this target
+        '''
         # load the state file and json parse it
         with open(self.statefile, "r") as statefile:
             tfstate = json.loads(statefile.read())
@@ -84,16 +77,15 @@ class TerraformTarget():
         module_name = matches[0]
 
         # find the appropriate module
-        # and return the matching output
+        # and return the all outputs
         modules = tfstate["modules"]
-        found_output_keys = []
         for module in modules:
             if module["path"] == ["root", module_name]:
+                outputs = {}
                 for k, v in module["outputs"].items():
-                    found_output_keys.append(k)
-                    if k == output:
-                        return v['value']
-        raise RuntimeError(f"Did not find output '{output}'. We found the following outputs in the target {self.target}: {found_output_keys}")
+                    outputs[k] = v['value']
+                return outputs
+        raise RuntimeError(f"Did not find target {self.target}")
 
 class Astronomer(TerraformTarget):
     def __init__(self, *args, **kwargs):
@@ -123,8 +115,7 @@ class InfraLayer(TerraformTarget):
         SOCKs proxy, in order to support webhooks
         in helm and kubectl.
         '''
-        proxy_command = self._get_output(
-            "bastion_proxy_command")
+        proxy_command = self._get_output()['bastion_proxy_command']
         https_proxy = "http://127.0.0.1:1234"
         return proxy_command, https_proxy
 

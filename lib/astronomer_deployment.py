@@ -39,13 +39,16 @@ class AstronomerDeployment():
         self.statefile = os.path.realpath(state_path)
         self.varsfile = os.path.realpath(varsfile_path)
 
+        terraform_directory = os.path.join(git_root(),"terraform")
         self._infra = \
             self.VARSFILE_CONVENTION[self._platform](
                 self.varsfile,
-                self.statefile)
+                self.statefile,
+                terraform_directory)
         self._astronomer = Astronomer(
             self.varsfile,
-            self.statefile)
+            self.statefile,
+            terraform_directory)
 
     def deploy(self):
         ''' Apply both the infrastructure and
