@@ -4,7 +4,8 @@ import os
 import psutil
 import subprocess
 from contextlib import contextmanager
-from terraform_modules import GcpInfra, AwsInfra, Astronomer
+from .layers import GcpInfra, AwsInfra, Astronomer
+from .utils import git_root
 
 class ConventionError(Exception):
     pass
@@ -31,7 +32,7 @@ class AstronomerDeployment():
         # the directory to it exists
         state_path = os.path.realpath(state_path)
         if not (os.path.isfile(state_path) or \
-                os.path.isdir(os.path.dirname(state_path)):
+                os.path.isdir(os.path.dirname(state_path))):
             raise FileNotFoundError(state_path)
 
         self.statefile = os.path.realpath(state_path)
@@ -51,13 +52,29 @@ class AstronomerDeployment():
         '''
         # apply the infrastructure layer
         proxy_command, https_proxy = self._infra.apply()
+
+        # TODO: avoid collisions on helm home and kubeconfig
+        environment = {
+            "https_proxy": https_proxy,
+            "http_proxy": https_proxy,
+            "HTTPS_PROXY": https_proxy,
+            "HTTP_PROXY": https_proxy,
+            "HELM_HOME": os.path.realpath(
+                os.path.join(git_root(),".helm")),
+            "KUBECONFIG": os.path.realpath(
+                os.path.join(git_root(),
+                             "terraform",
+                             "kubeconfig"))
+        }
         # enabling a proxy through the bastion host,
         # apply the astronomer layer
         with self._background_process(proxy_command):
-            self._astronomer.apply()
+            self._astronomer.apply(
+                environment=environment,
+                refresh=False)
 
     @property
-    def _platform(self)
+    def _platform(self):
         ''' Return the platform label, based on
         the variables path convention.
         '''
@@ -77,7 +94,7 @@ class AstronomerDeployment():
         try:
             yield process
         finally:
-            _kill_process(process.pid)
+            self._kill_process(process.pid)
 
     def _kill_process(self, proc_pid):
         ''' Kill a process and all
@@ -102,5 +119,5 @@ class AstronomerDeployment():
             raise ConventionError(
                 "The vars file should be placed in a " + \
                 "directory with one of the following " + \
-                f"names: {self.VARSFILE_CONVENTION.keys()}"
+                f"names: {self.VARSFILE_CONVENTION.keys()}")
 

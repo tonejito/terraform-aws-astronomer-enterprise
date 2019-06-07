@@ -29,7 +29,7 @@ provider "null" {
 }
 
 provider "kubernetes" {
-  config_path = "${path.module}/kubeconfig"
+  config_path = "${local_file.kubeconfig.filename}"
   load_config_file = true
 }
 
@@ -39,7 +39,7 @@ provider "helm" {
   install_tiller  = true
   tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.14.1"
   kubernetes {
-    config_path = "${path.module}/kubeconfig"
+    config_path = "${local_file.kubeconfig.filename}"
     # config_path = "${local_file.kubeconfig.filename}"
     load_config_file = true
   }

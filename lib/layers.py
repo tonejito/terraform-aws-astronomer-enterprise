@@ -1,7 +1,15 @@
+#!/usr/bin/env python3
+
 import re
+import os
+import json
 import subprocess
+from .utils import git_root
 
 class SituationUnaccountedFor(Exception):
+    pass
+
+class EnvironmentError(RuntimeError):
     pass
 
 class TerraformTarget():
@@ -12,7 +20,7 @@ class TerraformTarget():
         self.varsfile = varsfile
         self.statefile = statefile
 
-    def apply(self, refresh=False):
+    def apply(self, refresh=True, environment={}):
         ''' Initialize Terraform
         and apply to the target
         specificed by the extending class,
@@ -35,8 +43,9 @@ class TerraformTarget():
         else:
             command.append(f"-state={self.statefile}")
         command = " ".join(command)
+        print(f"Running command:\n{command}")
         subprocess.run(command,
-                       cwd=terraform_directory,
+                       cwd=self._terraform_directory,
                        env=environment,
                        check=True,
                        shell=True)
@@ -47,10 +56,9 @@ class TerraformTarget():
         ''' Defaults to:
         <git_root>/terraform
         '''
-        git_root = subprocess.check_output(
-            "git rev-parse --show-toplevel",
-            shell=True).decode('utf-8').strip()
-        return os.path.join(git_root,"terraform")
+        return os.path.join(
+            git_root(),
+            "terraform")
 
     @property
     def _outputs(self):
@@ -60,6 +68,7 @@ class TerraformTarget():
         ''' Parse TF state to find the
         specific output of this target
         '''
+        print(f"getting {output} from {self.target} from the file {self.statefile}")
         # load the state file and json parse it
         with open(self.statefile, "r") as statefile:
             tfstate = json.loads(statefile.read())
@@ -87,11 +96,20 @@ class TerraformTarget():
         raise RuntimeError(f"Did not find output '{output}'. We found the following outputs in the target {self.target}: {found_output_keys}")
 
 class Astronomer(TerraformTarget):
+    def __init__(self, *args, **kwargs):
+        ''' Add the Astronomer target
+        to the constructor before instantiating
+        '''
+        target = "module.astronomer"
+        super(Astronomer, self).__init__(target,
+                                       *args,
+                                       **kwargs)
     @property
     def _outputs(self):
         return None
 
 class InfraLayer(TerraformTarget):
+
     @property
     def _outputs(self):
         ''' All infrastructure layers
@@ -120,12 +138,24 @@ class GcpInfra(InfraLayer):
                                        *args,
                                        **kwargs)
 
+    def apply(self, *args, **kwargs):
+        gcp_creds = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+        if not gcp_creds:
+            raise EnvironmentError("For GCP deployments, please set environment variable GOOGLE_APPLICATION_CREDENTIALS as the path to your gcloud cli credentials")
+        # create or merge into kwargs['environment']
+        if not kwargs.get('environment'):
+            kwargs['environment'] = {}
+        kwargs['environment']\
+            ["GOOGLE_APPLICATION_CREDENTIALS"] = gcp_creds
+        return super(GcpInfra, self).apply(*args,
+                                           **kwargs)
+
 class AwsInfra(InfraLayer):
     def __init__(self, *args, **kwargs):
         ''' Add the AWS-specific target
         to the constructor before instantiating
         '''
         target = "module.astronomer_aws"
-        super(GcpInfra, self).__init__(target,
+        super(AwsInfra, self).__init__(target,
                                        *args,
                                        **kwargs)
