@@ -1,16 +1,17 @@
 module "astronomer" {
   # you can do it like this for development
   # just comment out version, source
-  # source  = "./terraform-kubernetes-astronomer"
-  source  = "astronomer/astronomer/kubernetes"
-  version = "0.1.1"
+  source  = "./terraform-kubernetes-astronomer"
+  # source  = "astronomer/astronomer/kubernetes"
+  # version = "0.1.1"
   admin_email = "${var.email}"
   base_domain = "${module.astronomer_gcp.base_domain}"
   db_connection_string = "${module.astronomer_gcp.db_connection_string}"
   tls_cert = "${module.astronomer_gcp.tls_cert}"
   tls_key = "${module.astronomer_gcp.tls_key}"
   cluster_type = "public"
-  enable_istio = "true"
+  enable_istio = "${var.enable_istio}"
+  local_umbrella_chart = "${var.local_umbrella_chart}"
 }
 
 module "astronomer_gcp" {
