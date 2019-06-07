@@ -3,6 +3,7 @@
 import os
 import psutil
 import subprocess
+from time import sleep
 from contextlib import contextmanager
 from .layers import GcpInfra, AwsInfra, Astronomer
 from .utils import git_root
@@ -68,7 +69,11 @@ class AstronomerDeployment():
         }
         # enabling a proxy through the bastion host,
         # apply the astronomer layer
-        with self._background_process(proxy_command):
+        with self._background_process(proxy_command) as process:
+            # Give some time for the proxy command
+            # to establish the connection,
+            sleep(3)
+            # then run terraform through the proxy
             self._astronomer.apply(
                 environment=environment,
                 refresh=False)
