@@ -91,22 +91,24 @@ def destroy(vars_file):
                             destroy=True,
                             refresh=True)
 
-def apply(vars_file):
-    gcp_dir = os.path.join(_dir, "terraform/")
+def apply(varsfile_path, state_path):
+    astronomer = AstronomerDeployment(varsfile_path,
+                                      state_path)
+    astronomer.deploy()
 
     environment = {
         "GOOGLE_APPLICATION_CREDENTIALS": os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
     }
 
     outputs = run_terraform(gcp_dir,
-                            vars_file,
+                            varsfile_path,
                             target="module.astronomer_gcp",
                             environment=environment,
                             refresh=True)
     proxy_command = outputs['bastion_proxy_command']
 
     outputs = run_terraform(gcp_dir,
-                            vars_file,
+                            varsfile_path,
                             target="local_file.kubeconfig")
 
     # pprint(outputs)
@@ -121,7 +123,7 @@ def apply(vars_file):
     }
     with _background_process(proxy_command):
         outputs = run_terraform(gcp_dir,
-                                vars_file,
+                                varsfile_path,
                                 target="module.astronomer",
                                 environment=environment)
 

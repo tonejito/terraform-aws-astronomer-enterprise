@@ -37,6 +37,7 @@ provider "helm" {
   service_account = "tiller"
   namespace       = "kube-system"
   install_tiller  = true
+  tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.14.1"
   kubernetes {
     config_path = "${path.module}/kubeconfig"
     # config_path = "${local_file.kubeconfig.filename}"
