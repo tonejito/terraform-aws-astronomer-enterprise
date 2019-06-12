@@ -24,11 +24,8 @@ module "system_components" {
 }
 
 module "astronomer" {
-  # you can do it like this for development
-  # just comment out version, source
-  source = "./terraform-kubernetes-astronomer"
-  # source  = "astronomer/astronomer/kubernetes"
-  # version = "0.1.1"
+  source  = "astronomer/astronomer/kubernetes"
+  version = "1.0.1"
   cluster_type          = "private"
   private_load_balancer = true
   base_domain           = module.aws.base_domain

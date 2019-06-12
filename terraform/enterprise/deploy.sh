@@ -10,10 +10,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [ ! -d $DIR/terraform-aws-astronomer-aws ]; then
   git clone https://github.com/astronomer/terraform-aws-astronomer-aws.git
 fi
-if [ ! -d $DIR/terraform-kubernetes-astronomer ]; then
-  git clone https://github.com/astronomer/terraform-kubernetes-astronomer.git
-fi
-if [ ! -d $DIR/terraform-kubernetes-astronomer ]; then
+# We still need to publish the top-level umbrella chart. Right now,
+# are only publishing each subchart individually (chart - helm terminology)
+if [ ! -d $DIR/helm.astronomer.io ]; then
   git clone https://github.com/astronomer/helm.astronomer.io.git
 fi
 
