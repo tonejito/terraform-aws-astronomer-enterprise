@@ -4,6 +4,7 @@ import re
 import os
 import json
 import subprocess
+from pprint import pprint
 from .utils import git_root
 
 class SituationUnaccountedFor(Exception):
@@ -50,15 +51,8 @@ class TerraformTarget():
                        env=environment,
                        check=True,
                        shell=True)
-        return self._outputs
 
-    @property
-    def _outputs(self):
-        ''' by default, return all
-        '''
-        return self._get_output()
-
-    def _get_output(self):
+    def _get_resource(self, _type, _name):
         ''' Parse TF state to find the
         outputs of this target
         '''
@@ -66,26 +60,13 @@ class TerraformTarget():
         with open(self.statefile, "r") as statefile:
             tfstate = json.loads(statefile.read())
 
-        # get the module name by parsing the target
-        module_regex = re.compile("^module\.([^.]*)$")
-        matches = module_regex.findall(self.target)
-        if len(matches) < 1:
-            raise NotImplementedError(
-                f"TerraformTarget is only support module targets right now. The target must match {module_regex.pattern} . The target is set to {self.target} .")
-        if len(matches) > 1:
-            raise SituationUnaccountedFor("Did not expect to find more than one match for the regex {module_regex.pattern}. Applying 'findall' to {self.target}")
-        module_name = matches[0]
+        for resource in tfstate['resources']:
+            if resource['type'] == _type and \
+                    resource['name'] == _name:
+                pprint(resource)
+                return resource
 
-        # find the appropriate module
-        # and return the all outputs
-        modules = tfstate["modules"]
-        for module in modules:
-            if module["path"] == ["root", module_name]:
-                outputs = {}
-                for k, v in module["outputs"].items():
-                    outputs[k] = v['value']
-                return outputs
-        raise RuntimeError(f"Did not find target {self.target}")
+        raise RuntimeError(f"Did not find {_type} {_name}")
 
 class Astronomer(TerraformTarget):
     def __init__(self, *args, **kwargs):
@@ -96,38 +77,34 @@ class Astronomer(TerraformTarget):
         super(Astronomer, self).__init__(target,
                                        *args,
                                        **kwargs)
-    @property
-    def _outputs(self):
-        return None
+
+class SystemComponents(TerraformTarget):
+    def __init__(self, *args, **kwargs):
+        ''' Add the target
+        to the constructor before instantiating
+        '''
+        target = "module.system_components"
+        super(SystemComponents, self).__init__(target,
+                                       *args,
+                                       **kwargs)
 
 class InfraLayer(TerraformTarget):
-
-    @property
-    def _outputs(self):
-        ''' All infrastructure layers
-        will return a proxy command in the
-        output named "bastion_proxy_command"
-        and that command will start a proxy
-        through the bastion host to the private
-        Kubernetes endpoint. The proxy should
-        be made available on localhost:1234,
-        and it should be an HTTP proxy, not a
-        SOCKs proxy, in order to support webhooks
-        in helm and kubectl.
-        '''
-        proxy_command = self._get_output()['bastion_proxy_command']
-        https_proxy = "http://127.0.0.1:1234"
-        return proxy_command, https_proxy
+    pass
 
 class GcpInfra(InfraLayer):
     def __init__(self, *args, **kwargs):
         ''' Add the GCP-specific target
         to the constructor before instantiating
         '''
-        target = "module.astronomer_gcp"
+        target = "module.gcp"
         super(GcpInfra, self).__init__(target,
                                        *args,
                                        **kwargs)
+
+    def _proxy_command(self):
+        zone = self._get_resource("google_compute_instance", "bastion")['instances'][0]['zone']
+        name = self._get_resource("google_compute_instance", "bastion")['instances'][0]['name']
+        return f"gcloud beta compute ssh --zone {zone} {name} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'"
 
     def apply(self, *args, **kwargs):
         gcp_creds = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
@@ -146,7 +123,7 @@ class AwsInfra(InfraLayer):
         ''' Add the AWS-specific target
         to the constructor before instantiating
         '''
-        target = "module.astronomer_aws"
+        target = "module.aws"
         super(AwsInfra, self).__init__(target,
                                        *args,
                                        **kwargs)

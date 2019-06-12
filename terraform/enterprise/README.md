@@ -1,0 +1,3 @@
+- Terraform 0.12
+- check that at least two subnets, in same region as aws_region and in different AZs
+- turn off public endpoint

@@ -23,5 +23,6 @@ def main():
         "terraform.tfstate")
     apply(vars_file, state_file)
 
+
 if __name__ == "__main__":
     main()

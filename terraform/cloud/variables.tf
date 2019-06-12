@@ -1,30 +1,39 @@
 variable "project" {
-  type = "string"
+  type = string
 }
+
 variable "dns_managed_zone" {
-  type = "string"
+  type = string
 }
+
 variable "email" {
-  type = "string"
+  type = string
 }
+
 variable "deployment_id" {
-  type = "string"
+  type = string
 }
+
 variable "local_umbrella_chart" {
   default = false
 }
+
 variable "enable_istio" {
   default = true
 }
+
 variable "region" {
   default = "us-east4"
-  type = "string"
+  type    = string
 }
+
 variable "zone" {
   default = "us-east4-a"
-  type = "string"
+  type    = string
 }
+
 variable "acme_server" {
   default = "https://acme-v02.api.letsencrypt.org/directory"
-  type = "string"
+  type    = string
 }
+

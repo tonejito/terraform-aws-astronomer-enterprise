@@ -5,7 +5,7 @@ import psutil
 import subprocess
 from time import sleep
 from contextlib import contextmanager
-from .layers import GcpInfra, AwsInfra, Astronomer
+from .layers import GcpInfra, AwsInfra, Astronomer, SystemComponents
 from .utils import git_root
 
 class ConventionError(Exception):
@@ -45,17 +45,27 @@ class AstronomerDeployment():
                 self.varsfile,
                 self.statefile,
                 terraform_directory)
+        self._system_components = SystemComponents(
+            self.varsfile,
+            self.statefile,
+            terraform_directory)
         self._astronomer = Astronomer(
             self.varsfile,
             self.statefile,
             terraform_directory)
+
+    @property
+    def proxy(self):
+        return "http://127.0.0.1:1234"
 
     def deploy(self):
         ''' Apply both the infrastructure and
         Astronomer terraform modules.
         '''
         # apply the infrastructure layer
-        proxy_command, https_proxy = self._infra.apply()
+        self._infra.apply()
+
+        https_proxy = self.proxy
 
         # TODO: avoid collisions on helm home and kubeconfig
         environment = {
@@ -72,14 +82,18 @@ class AstronomerDeployment():
         }
         # enabling a proxy through the bastion host,
         # apply the astronomer layer
-        with self._background_process(proxy_command) as process:
+        with self._proxy_on() as process:
             # Give some time for the proxy command
             # to establish the connection,
-            sleep(3)
+            sleep(10)
+            # then run terraform through the proxy
+            self._system_components.apply(
+                environment=environment)
+                # refresh=False)
             # then run terraform through the proxy
             self._astronomer.apply(
-                environment=environment,
-                refresh=False)
+                environment=environment)
+                # refresh=False)
 
     @property
     def _platform(self):
@@ -89,6 +103,12 @@ class AstronomerDeployment():
         directory_path = os.path.dirname(self.varsfile)
         directory_name = os.path.basename(directory_path)
         return directory_name
+
+    @contextmanager
+    def _proxy_on(self):
+        command = self._infra._proxy_command()
+        with self._background_process(command) as process:
+            yield process
 
     @contextmanager
     def _background_process(self, command):

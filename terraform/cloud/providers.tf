@@ -1,20 +1,20 @@
 provider "google" {
   version = "~> 2.7"
-  region  = "${var.region}"
-  project = "${var.project}"
-  zone    = "${var.zone}"
+  region  = var.region
+  project = var.project
+  zone    = var.zone
 }
 
 provider "google-beta" {
   version = "~> 2.7"
-  region  = "${var.region}"
-  project = "${var.project}"
-  zone    = "${var.zone}"
+  region  = var.region
+  project = var.project
+  zone    = var.zone
 }
 
 provider "acme" {
-  version = "~> 1.3"
-  server_url = "${var.acme_server}"
+  version    = "~> 1.3"
+  server_url = var.acme_server
 }
 
 provider "random" {
@@ -29,7 +29,7 @@ provider "null" {
 }
 
 provider "kubernetes" {
-  config_path = "${local_file.kubeconfig.filename}"
+  config_path      = local_file.kubeconfig.filename
   load_config_file = true
 }
 
@@ -39,10 +39,10 @@ provider "helm" {
   install_tiller  = true
   tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.14.1"
   kubernetes {
-    config_path = "${local_file.kubeconfig.filename}"
+    config_path = local_file.kubeconfig.filename
+
     # config_path = "${local_file.kubeconfig.filename}"
     load_config_file = true
   }
 }
-
 
