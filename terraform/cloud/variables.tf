@@ -14,10 +14,6 @@ variable "deployment_id" {
   type = string
 }
 
-variable "local_umbrella_chart" {
-  default = false
-}
-
 variable "enable_istio" {
   default = true
 }

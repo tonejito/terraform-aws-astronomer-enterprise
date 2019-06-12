@@ -6,7 +6,11 @@ provider "google" {
 }
 
 provider "google-beta" {
-  version = "~> 2.7"
+  # TODO: after GKE sandbox supported by
+  # provider google-beta
+  # until now, we are using a local,
+  # re-compiled binary
+  # version = "~> 2.7"
   region  = var.region
   project = var.project
   zone    = var.zone
@@ -29,7 +33,7 @@ provider "null" {
 }
 
 provider "kubernetes" {
-  config_path      = local_file.kubeconfig.filename
+  config_path      = module.gcp.kubeconfig_filename
   load_config_file = true
 }
 
@@ -39,10 +43,7 @@ provider "helm" {
   install_tiller  = true
   tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.14.1"
   kubernetes {
-    config_path = local_file.kubeconfig.filename
-
-    # config_path = "${local_file.kubeconfig.filename}"
+    config_path = module.gcp.kubeconfig_filename
     load_config_file = true
   }
 }
-
