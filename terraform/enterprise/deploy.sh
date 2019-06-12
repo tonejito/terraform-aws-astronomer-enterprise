@@ -13,6 +13,9 @@ fi
 if [ ! -d $DIR/terraform-kubernetes-astronomer ]; then
   git clone https://github.com/astronomer/terraform-kubernetes-astronomer.git
 fi
+if [ ! -d $DIR/terraform-kubernetes-astronomer ]; then
+  git clone https://github.com/astronomer/helm.astronomer.io.git
+fi
 
 terraform init
 
