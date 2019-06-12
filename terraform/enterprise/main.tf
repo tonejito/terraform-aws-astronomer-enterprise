@@ -12,12 +12,7 @@ module "aws" {
   # everything is deployed.
   # Otherwise, you have to deal with a bastion
   # and proxy settings.
-  management_api  = "public"
-}
-
-resource "local_file" "kubeconfig" {
-  sensitive_content = module.aws.kubeconfig
-  filename          = "${path.module}/kubeconfig"
+  management_api  = var.management_api
 }
 
 # install tiller, which is the server-side component
@@ -31,15 +26,14 @@ module "system_components" {
 module "astronomer" {
   # you can do it like this for development
   # just comment out version, source
-  source = "../terraform-kubernetes-astronomer"
+  source = "./terraform-kubernetes-astronomer"
   # source  = "astronomer/astronomer/kubernetes"
   # version = "0.1.1"
-  cluster_type         = "private"
-  base_domain          = module.aws.base_domain
-  db_connection_string = module.aws.db_connection_string
-  tls_cert             = module.aws.tls_cert
-  tls_key              = module.aws.tls_key
-  private_load_balancer= false
-  local_umbrella_chart = var.local_umbrella_chart
+  cluster_type          = "private"
+  private_load_balancer = true
+  base_domain           = module.aws.base_domain
+  db_connection_string  = module.aws.db_connection_string
+  tls_cert              = module.aws.tls_cert
+  tls_key               = module.aws.tls_key
 }
 

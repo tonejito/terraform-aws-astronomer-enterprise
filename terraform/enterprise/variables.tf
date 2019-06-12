@@ -2,6 +2,10 @@ variable "route53_domain" {
   type = string
 }
 
+variable "management_api" {
+  type = string
+}
+
 variable "email" {
   type = string
 }
