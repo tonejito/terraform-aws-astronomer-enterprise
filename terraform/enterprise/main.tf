@@ -1,12 +1,14 @@
 module "aws" {
-  # source          = "astronomer/astronomer-aws/aws"
-  # version         = "1.0.2"
-  source          = "./terraform-aws-astronomer-aws"
+  source          = "astronomer/astronomer-aws/aws"
+  version         = "1.0.3"
+  # source          = "./terraform-aws-astronomer-aws"
   deployment_id   = var.deployment_id
   admin_email     = var.email
   route53_domain  = var.route53_domain
   vpc_id          = var.vpc_id
   private_subnets = var.private_subnets
+  enable_bastion = var.enable_bastion
+  public_subnets = var.public_subnets
   # It makes the installation easier to leave
   # this public, then just flip it off after
   # everything is deployed.
