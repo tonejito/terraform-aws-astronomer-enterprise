@@ -2,6 +2,11 @@
 
 set -xe
 
+if [ ! -f $1 ]; then
+  echo "$1 is not a file, please provide a path to a variables file."
+  exit 1
+fi
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # We still need to publish the top-level umbrella chart. Right now,
@@ -13,7 +18,7 @@ fi
 terraform init
 
 # deploy EKS, RDS
-terraform apply -var-file=$DIR/environments/staging.tfvars --target=module.gcp
+terraform apply -var-file=$1 --target=module.gcp
 
 BASTION='staging-bastion'
 ZONE=$(gcloud compute instances list --filter="name=('$BASTION')" --format 'csv[no-heading](zone)')
@@ -29,7 +34,7 @@ trap finish EXIT
 sleep 5 # give the proxy time to establish
 
 # install Tiller in the cluster
-https_proxy=http://127.0.0.1:1234 terraform apply -var-file=$DIR/environments/staging.tfvars --target=module.system_components
+https_proxy=http://127.0.0.1:1234 terraform apply -var-file=$1 --target=module.system_components
 
 # install astronomer in the cluster
-https_proxy=http://127.0.0.1:1234 terraform apply -var-file=$DIR/environments/staging.tfvars --target=module.astronomer
+https_proxy=http://127.0.0.1:1234 terraform apply -var-file=$1 --target=module.astronomer
