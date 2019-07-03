@@ -8,3 +8,4 @@ providers.tf
 .terraform*
 *.tfstate
 kubeconfig*
+*tfstate*

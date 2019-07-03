@@ -8,3 +8,11 @@
 # Architecture
 
 ![Astronomer Private Cloud Architecture](images/aws_architecture.png)
+
+- optional bastion
+- optional VPC and subnet creation
+- optional private management API
+
+# Note
+
+If using private mangement API, you must have some way to access the API. There are a few ways to do this. You can execute from a host inside the VPC you intend to deploy EKS in. You can use --target on module.aws, then start a proxy through the bastion before applying the rest of the module. It may be easiest to just deploy with the management API public, then manually switch it to private in the AWS console.

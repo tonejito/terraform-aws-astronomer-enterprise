@@ -1,0 +1,6 @@
+kubeconfig
+kubeconfig*
+config-map*
+.terraform/*
+.terraform
+*tfstate*
