@@ -1,8 +1,10 @@
-*.terraform*
-venv/*
+terraform-*
+config-map*
+helm.astronomer.io/*
+helm.astronomer.io
+*.tfvars
+providers.tf
+.terraform
+.terraform*
 *.tfstate
-*.tfstate*
-*kubeconfig*
-.helm/*
-states/*
-*__pycache__*
+kubeconfig*
