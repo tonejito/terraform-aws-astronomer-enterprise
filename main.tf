@@ -1,6 +1,6 @@
 module "aws" {
   source          = "astronomer/astronomer-aws/aws"
-  version         = "1.1.1"
+  version         = "1.1.2"
   deployment_id   = var.deployment_id
   admin_email     = var.email
   route53_domain  = var.route53_domain
@@ -35,6 +35,7 @@ module "astronomer" {
   # source                = "../terraform-kubernetes-astronomer"
   cluster_type          = "private"
   private_load_balancer = true
+  astronomer_version    = "0.9.2"
   base_domain           = module.aws.base_domain
   db_connection_string  = module.aws.db_connection_string
   tls_cert              = module.aws.tls_cert

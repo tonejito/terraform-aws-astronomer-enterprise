@@ -30,18 +30,6 @@ variable "private_subnets" {
   type        = list(string)
 }
 
-variable "aws_region" {
-  default = "us-east-1"
-  type    = string
-}
-
-variable "acme_server" {
-  description = "Endpoint to use for generating the let's encrypt TLS certificate. Defaults to the production endpoint"
-  default     = "https://acme-v02.api.letsencrypt.org/directory"
-  # default = "https://acme-staging-v02.api.letsencrypt.org/directory"
-  type = string
-}
-
 variable "enable_bastion" {
   default     = false
   description = "Launch a bastion in a public subnet? For this to work, you must include 1 subnet id in the public_subets variable"

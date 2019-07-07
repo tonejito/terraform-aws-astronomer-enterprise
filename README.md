@@ -1,3 +1,7 @@
+# Astronomer Enterprise
+
+[![Build Status](https://cloud.drone.io/api/badges/astronomer/terraform-aws-astronomer-enterprise/status.svg)](https://cloud.drone.io/astronomer/terraform-aws-astronomer-enterprise)
+
 # Required in path
 
 - [Terraform 0.12](https://www.terraform.io/upgrade-guides/0-12.html)

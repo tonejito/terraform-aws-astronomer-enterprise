@@ -1,0 +1,64 @@
+kind: pipeline
+name: terraform-aws-astronomer-enterprise
+
+steps:
+
+- name: lint
+  image: hashicorp/terraform:light
+  commands:
+    - cp providers.tf.example providers.tf
+    - terraform init
+    - terraform fmt -check=true
+    - terraform validate -var "deployment_id=validate" -var "route53_domain=validate-fake.com" -var "email=fake@mailinator.com"
+    - |
+      for example in $(find examples -maxdepth 1 -mindepth 1 -type d); do
+      cp providers.tf $example
+      cd $example
+      echo $example
+      terraform init
+      terraform fmt -check=true
+      terraform validate -var "deployment_id=citest"
+      cd -
+      done
+    - terraform -v
+  when:
+    event:
+      - pull_request
+      - push
+
+- name: from_scratch
+  image: hashicorp/terraform:light
+  depends_on:
+    - lint
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: AWS_SECRET_ACCESS_KEY
+  commands:
+    - EXAMPLE=from_scratch pipeline/run_terraform.sh
+  when:
+    event:
+      - push
+    branch:
+      - master
+
+- name: from_scratch_cleanup
+  depends_on:
+    - from_scratch
+  image: hashicorp/terraform:light
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: AWS_SECRET_ACCESS_KEY
+  commands:
+    - DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
+  when:
+    event:
+      - push
+    status:
+      - failure
+      - success
+    branch:
+      - master
