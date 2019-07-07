@@ -35,3 +35,9 @@ variable "enable_bastion" {
   description = "Launch a bastion in a public subnet? For this to work, you must include 1 subnet id in the public_subets variable"
   type        = bool
 }
+
+variable "tags" {
+  description = "A mapping of tags to be applied to AWS resources"
+  default     = {}
+  type        = map(string)
+}

@@ -7,6 +7,7 @@ module "aws" {
   vpc_id          = var.vpc_id
   private_subnets = var.private_subnets
   enable_bastion  = var.enable_bastion
+  tags            = var.tags
   cluster_type    = "private"
   # It makes the installation easier to leave
   # this public, then just flip it off after
