@@ -24,7 +24,7 @@ module "aws" {
 module "system_components" {
   dependencies = [module.aws.depended_on]
   source       = "astronomer/astronomer-system-components/kubernetes"
-  version      = "0.0.6"
+  version      = "0.0.7"
   # source       = "../terraform-kubernetes-astronomer-system-components"
   enable_istio = "false"
 }
@@ -32,7 +32,7 @@ module "system_components" {
 module "astronomer" {
   dependencies = [module.system_components.depended_on]
   source       = "astronomer/astronomer/kubernetes"
-  version      = "1.0.6"
+  version      = "1.0.7"
   # source                = "../terraform-kubernetes-astronomer"
   cluster_type          = "private"
   private_load_balancer = true

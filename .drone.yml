@@ -42,7 +42,7 @@ steps:
     event:
       - push
 
-- name: from_scratch
+- name: terraform_apply
   image: sjmiller609/helm-kubectl-terraform:latest
   environment:
     AWS_ACCESS_KEY_ID:
@@ -57,7 +57,7 @@ steps:
     branch:
       - master
 
-- name: from_scratch_cleanup
+- name: terraform_destroy
   image: sjmiller609/helm-kubectl-terraform:latest
   environment:
     AWS_ACCESS_KEY_ID:
