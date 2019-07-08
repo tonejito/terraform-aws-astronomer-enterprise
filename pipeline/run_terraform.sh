@@ -15,7 +15,7 @@ sed -i "s/REPLACE/$DEPLOYMENT_ID/g" backend.tf
 terraform init
 
 if [ $DESTROY -eq 1 ]; then
-  terraform destroy --auto-approve -var "deployment_id=$DEPLOYMENT_ID"
+  terraform destroy --auto-approve -var "deployment_id=$DEPLOYMENT_ID" -refresh=false -lock=false
 else
   terraform apply --auto-approve -var "deployment_id=$DEPLOYMENT_ID"
 fi

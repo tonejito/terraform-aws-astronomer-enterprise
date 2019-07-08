@@ -3,6 +3,7 @@ name: terraform-aws-astronomer-enterprise
 
 steps:
 
+
 - name: lint
   image: hashicorp/terraform:light
   commands:
@@ -26,10 +27,23 @@ steps:
       - pull_request
       - push
 
+- name: ci-environment
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: DOCKER_USER
+    password:
+      from_secret: DOCKER_PASSWORD
+    repo:
+      from_secret: DOCKER_REPO
+    auto_tag: true
+    dockerfile: pipeline/Dockerfile
+  when:
+    event:
+      - push
+
 - name: from_scratch
-  image: hashicorp/terraform:light
-  depends_on:
-    - lint
+  image: sjmiller609/helm-kubectl-terraform:latest
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: AWS_ACCESS_KEY_ID
@@ -44,9 +58,7 @@ steps:
       - master
 
 - name: from_scratch_cleanup
-  depends_on:
-    - from_scratch
-  image: hashicorp/terraform:light
+  image: sjmiller609/helm-kubectl-terraform:latest
   environment:
     AWS_ACCESS_KEY_ID:
       from_secret: AWS_ACCESS_KEY_ID
