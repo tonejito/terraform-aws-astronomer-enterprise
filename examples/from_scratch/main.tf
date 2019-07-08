@@ -20,6 +20,8 @@ module "astronomer_aws_from_scratch" {
   # EKS kubernetes management endpoint
   management_api = "public"
 
+  enable_bastion = true
+
   # Choose tags for the AWS resources
   tags = {
     "CI" = "true"

@@ -43,3 +43,24 @@ module "astronomer" {
   tls_key               = module.aws.tls_key
 }
 
+data "aws_lambda_invocation" "elb_name" {
+  depends_on    = [module.astronomer]
+  function_name = "${module.aws.elb_lookup_function_name}"
+  input         = "{}"
+}
+
+data "aws_elb" "nginx_lb" {
+  name = data.aws_lambda_invocation.elb_name.result_map["Name"]
+}
+
+data "aws_route53_zone" "selected" {
+  name = "${var.route53_domain}."
+}
+
+resource "aws_route53_record" "astronomer" {
+  zone_id = "${data.aws_route53_zone.selected.zone_id}"
+  name    = "*.${var.deployment_id}.${data.aws_route53_zone.selected.name}"
+  type    = "CNAME"
+  ttl     = "30"
+  records = [data.aws_elb.nginx_lb.dns_name]
+}
