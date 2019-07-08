@@ -2,12 +2,14 @@
 
 [![Build Status](https://cloud.drone.io/api/badges/astronomer/terraform-aws-astronomer-enterprise/status.svg)](https://cloud.drone.io/astronomer/terraform-aws-astronomer-enterprise)
 
-# Required in path
+# Required in path and tested versions
 
-- [Terraform 0.12](https://www.terraform.io/upgrade-guides/0-12.html)
-- [Helm 2.14.0](https://helm.sh/docs/using_helm/)
-- [Kubectl 1.12.0](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
+[Sample execution environment](pipeline/Dockerfile)
+
+- [Terraform 0.12.3](https://www.terraform.io/upgrade-guides/0-12.html)
+- [Helm 2.14.1](https://helm.sh/docs/using_helm/)
+- [Kubectl 1.12.3](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [aws-iam-authenticator 1.13.7](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
 
 # Architecture
 
@@ -16,6 +18,12 @@
 - optional bastion
 - optional VPC and subnet creation
 - optional private management API
+
+# Sample use
+
+[Example module block](examples/from_scratch/main.tf)
+
+The above example creates all resources including VPC and subnets.
 
 # Note
 
