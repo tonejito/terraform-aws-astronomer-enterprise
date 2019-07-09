@@ -41,3 +41,9 @@ variable "tags" {
   default     = {}
   type        = map(string)
 }
+
+variable "security_groups_to_whitelist_on_eks_api" {
+  description = "A list of security group IDs to whitelist on the EKS management security group using security group referencing. For example, if you have a security group assigned to your terraform server, you can add that security group to this list to allow access to the private EKS endpoint from that server."
+  default     = []
+  type        = list
+}
