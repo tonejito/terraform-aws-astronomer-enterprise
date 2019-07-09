@@ -1,14 +1,15 @@
 module "aws" {
-  source          = "astronomer/astronomer-aws/aws"
-  version         = "1.1.3"
-  deployment_id   = var.deployment_id
-  admin_email     = var.email
-  route53_domain  = var.route53_domain
-  vpc_id          = var.vpc_id
-  private_subnets = var.private_subnets
-  enable_bastion  = var.enable_bastion
-  tags            = var.tags
-  cluster_type    = "private"
+  source                        = "astronomer/astronomer-aws/aws"
+  version                       = "1.1.4"
+  deployment_id                 = var.deployment_id
+  admin_email                   = var.email
+  route53_domain                = var.route53_domain
+  vpc_id                        = var.vpc_id
+  private_subnets               = var.private_subnets
+  enable_bastion                = var.enable_bastion
+  tags                          = var.tags
+  extra_sg_ids_for_eks_security = var.security_groups_to_whitelist_on_eks_api
+  cluster_type                  = "private"
   # It makes the installation easier to leave
   # this public, then just flip it off after
   # everything is deployed.
