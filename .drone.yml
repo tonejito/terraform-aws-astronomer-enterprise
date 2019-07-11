@@ -95,3 +95,49 @@ steps:
       - success
     branch:
       - master
+
+- name: slack
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: WEBHOOK_URL
+    channel: infrastructure
+    username: terraform-ci
+    template: >
+      {{repo.name}}
+      {{build.link}}
+      {{#success build.status}}
+        succeeded
+      {{else}}
+        failed
+      {{/success}}
+  when:
+    event:
+      - push
+    status:
+      - success
+      - failure
+    branch:
+      - master
+    repo:
+    - astronomer/terraform-aws-astronomer-enterprise
+
+- name: slack_tag
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: WEBHOOK_URL
+    channel: infrastructure
+    username: terraform-ci
+    template: >
+      {{repo.name}}
+      version {{build.tag}} released
+  when:
+    event:
+      - tag
+    status:
+      - success
+    branch:
+      - master
+    repo:
+    - astronomer/terraform-aws-astronomer-enterprise
