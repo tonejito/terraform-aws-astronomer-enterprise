@@ -36,6 +36,18 @@ variable "enable_bastion" {
   type        = bool
 }
 
+variable "min_cluster_size" {
+  default     = 6
+  description = "The minimum number of instance in the EKS worker nodes auto scaling group."
+  type        = number
+}
+
+variable "max_cluster_size" {
+  default     = 12
+  description = "The maximum number of instance in the EKS worker nodes auto scaling group."
+  type        = number
+}
+
 variable "tags" {
   description = "A mapping of tags to be applied to AWS resources"
   default     = {}
