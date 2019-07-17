@@ -1,6 +1,6 @@
 module "aws" {
   source                        = "astronomer/astronomer-aws/aws"
-  version                       = "1.1.4"
+  version                       = "1.1.26"
   deployment_id                 = var.deployment_id
   admin_email                   = var.email
   route53_domain                = var.route53_domain
