@@ -1,5 +1,13 @@
 variable deployment_id {}
 
+# A windows instance with firefox
+# and network access to the deployment.
+# Useful for debugging.
+# It's unnecessary for most use cases.
+variable enable_windows_box {
+  default = false
+}
+
 module "astronomer_aws_from_scratch" {
   # To use this module, source like this:
   # source          = "astronomer/astronomer-enterprise/aws"
@@ -20,10 +28,21 @@ module "astronomer_aws_from_scratch" {
   # EKS kubernetes management endpoint
   management_api = "public"
 
-  enable_bastion = true
+  enable_bastion     = true
+  enable_windows_box = var.enable_windows_box
 
   # Choose tags for the AWS resources
   tags = {
     "CI" = "true"
   }
+}
+
+# used for debugging
+
+output "windows_debug_box_password" {
+  value = module.astronomer_aws_from_scratch.windows_debug_box_password
+}
+
+output "windows_debug_box_hostname" {
+  value = module.astronomer_aws_from_scratch.windows_debug_box_hostname
 }
