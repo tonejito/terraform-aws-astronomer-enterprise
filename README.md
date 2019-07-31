@@ -8,7 +8,7 @@ Updates are not guaranteed to be non-interrupting. Always use Terraform best-pra
 
 [Sample execution environment](pipeline/Dockerfile)
 
-- [Terraform 0.12.3](https://www.terraform.io/upgrade-guides/0-12.html)
+- [Terraform >= 0.12.3](https://www.terraform.io/upgrade-guides/0-12.html)
 - [Helm 2.14.1](https://helm.sh/docs/using_helm/)
 - [Kubectl 1.12.3](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [aws-iam-authenticator 1.13.7](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
