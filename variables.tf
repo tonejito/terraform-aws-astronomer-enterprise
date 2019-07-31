@@ -65,3 +65,13 @@ variable "security_groups_to_whitelist_on_eks_api" {
   default     = []
   type        = list
 }
+
+variable "ten_dot_what_cidr" {
+  description = "This variable is applicable only when creating a VPC. 10.X.0.0/16 - choose X."
+
+  # This is probably not that common
+  default = "234"
+  type    = string
+}
+
+
