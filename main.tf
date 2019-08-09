@@ -48,7 +48,7 @@ module "astronomer" {
   # source                = "../terraform-kubernetes-astronomer"
   cluster_type          = "private"
   private_load_balancer = true
-  astronomer_version    = "0.9.2"
+  astronomer_version    = "0.9.6"
   base_domain           = module.aws.base_domain
   db_connection_string  = module.aws.db_connection_string
   tls_cert              = module.aws.tls_cert
