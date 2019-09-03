@@ -74,4 +74,20 @@ variable "ten_dot_what_cidr" {
   type    = string
 }
 
+variable "cluster_type" {
+  description = "Toggle the type of cluster - public or private"
+  default     = "private"
+  type        = string
+}
 
+variable "private_load_balancer" {
+  description = "Enable / disable private load balancer. The web UI will be publicly accessible when disabled. Use boolean value true or false"
+  default     = true
+  type        = bool
+}
+
+variable "astronomer_version" {
+  description = "Version of the Astronomer platform installed"
+  default     = "0.10.0"
+  type        = string
+}
