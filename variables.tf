@@ -88,7 +88,7 @@ variable "private_load_balancer" {
 
 variable "astronomer_version" {
   description = "Version of the Astronomer platform installed"
-  default     = "0.10.0"
+  default     = "0.10.2"
   type        = string
 }
 
