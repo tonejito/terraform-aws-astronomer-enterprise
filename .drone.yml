@@ -54,8 +54,6 @@ steps:
   when:
     event:
       - push
-    branch:
-      - master
 
 - name: terraform_destroy
   image: sjmiller609/helm-kubectl-terraform:latest
@@ -72,8 +70,6 @@ steps:
     status:
       - failure
       - success
-    branch:
-      - master
 
 - name: git_tag
   image: docker:git
