@@ -96,3 +96,20 @@ variable "cluster_version" {
   default = "1.13"
   type    = string
 }
+
+variable "tls_cert" {
+  default     = ""
+  type        = string
+  description = "The signed certificate for the Astronomer Load Balancer. It should be signed by a certificate authorize and should have common name *.base_domain. Ignored if var.lets_encrypt is true."
+}
+
+variable "tls_key" {
+  default     = ""
+  type        = string
+  description = "The private key corresponding to the signed certificate tls_cert. Ignored if var.lets_encrypt is true"
+}
+
+variable "lets_encrypt" {
+  default = true
+  type    = bool
+}
