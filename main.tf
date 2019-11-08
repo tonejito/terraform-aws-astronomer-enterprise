@@ -52,8 +52,8 @@ module "astronomer" {
   astronomer_version    = var.astronomer_version
   base_domain           = module.aws.base_domain
   db_connection_string  = module.aws.db_connection_string
-  tls_cert              = module.aws.tls_cert
-  tls_key               = module.aws.tls_key
+  tls_cert              = var.tls_cert == "" ? module.aws.tls_cert : var.tls_cert
+  tls_key               = var.tls_cert == "" ? module.aws.tls_key : var.tls_key
 }
 
 data "aws_lambda_invocation" "elb_name" {
