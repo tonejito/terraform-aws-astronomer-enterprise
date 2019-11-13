@@ -24,6 +24,10 @@ module "aws" {
   # - bastion with proxy
   # - execute terraform from VPC
   management_api = var.management_api
+
+  # if the TLS cert and key are provided, we will want to use
+  # them instead of asking for a Let's Encrypt cert.
+  lets_encrypt = var.lets_encrypt
 }
 
 # Get the AWS_REGION used by the aws provider
