@@ -1,6 +1,6 @@
 module "aws" {
   source  = "astronomer/astronomer-aws/aws"
-  version = "1.1.29"
+  version = "1.1.57"
   # source                        = "../terraform-aws-astronomer-aws"
   deployment_id                 = var.deployment_id
   admin_email                   = var.email
@@ -24,6 +24,10 @@ module "aws" {
   # - bastion with proxy
   # - execute terraform from VPC
   management_api = var.management_api
+
+  # if the TLS cert and key are provided, we will want to use
+  # them instead of asking for a Let's Encrypt cert.
+  lets_encrypt = var.lets_encrypt
 }
 
 # Get the AWS_REGION used by the aws provider
@@ -52,8 +56,8 @@ module "astronomer" {
   astronomer_version    = var.astronomer_version
   base_domain           = module.aws.base_domain
   db_connection_string  = module.aws.db_connection_string
-  tls_cert              = module.aws.tls_cert
-  tls_key               = module.aws.tls_key
+  tls_cert              = var.tls_cert == "" ? module.aws.tls_cert : var.tls_cert
+  tls_key               = var.tls_key == "" ? module.aws.tls_key : var.tls_key
 }
 
 data "aws_lambda_invocation" "elb_name" {
