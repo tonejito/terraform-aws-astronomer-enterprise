@@ -1,6 +1,12 @@
 variable "route53_domain" {
-  description = "The name of your public route53 hosted zone, does not include a trailing dot. Should match the domain. This is used to generate a certificate with let's encrypt"
+  description = "The name of your public route53 hosted zone, does not include a trailing dot. Should match the domain. This is used to generate a certificate with let's encrypt. If you don't want to make a certificate with let's encrypt, and you also don't want the DNS record created on your behalf, then set this as an empty string, set create_record to falsee, and provide tls_cert and tls_key variables"
   type        = string
+}
+
+variable "create_record" {
+  description = "The name of your public route53 hosted zone, does not include a trailing dot. Should match the domain. This is used to generate a certificate with let's encrypt"
+  default     = true
+  type        = bool
 }
 
 variable "management_api" {

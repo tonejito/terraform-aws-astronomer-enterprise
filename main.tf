@@ -71,12 +71,14 @@ data "aws_elb" "nginx_lb" {
 }
 
 data "aws_route53_zone" "selected" {
-  name = "${var.route53_domain}."
+  count = var.create_record ? 1 : 0
+  name  = "${var.route53_domain}."
 }
 
 resource "aws_route53_record" "astronomer" {
-  zone_id = "${data.aws_route53_zone.selected.zone_id}"
-  name    = "*.${var.deployment_id}.${data.aws_route53_zone.selected.name}"
+  count   = var.create_record ? 1 : 0
+  zone_id = "${data.aws_route53_zone.selected[0].zone_id}"
+  name    = "*.${var.deployment_id}.${data.aws_route53_zone.selected[0].name}"
   type    = "CNAME"
   ttl     = "30"
   records = [data.aws_elb.nginx_lb.dns_name]
