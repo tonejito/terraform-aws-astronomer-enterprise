@@ -2,7 +2,7 @@ FROM python:alpine
 
 ARG HELM_VERSION="v2.16.1"
 ARG KUBECTL_VERSION="v1.12.0"
-ARG TERRAFORM_VERSION="0.12.18"
+ARG TERRAFORM_VERSION="0.12.19"
 
 RUN apk add --no-cache ca-certificates bash curl git \
     && wget -q https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl \
