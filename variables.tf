@@ -92,18 +92,6 @@ variable "ten_dot_what_cidr" {
   type    = string
 }
 
-variable "cluster_type" {
-  description = "Toggle the type of cluster - public or private"
-  default     = "private"
-  type        = string
-}
-
-variable "private_load_balancer" {
-  description = "Enable / disable private load balancer. The web UI will be publicly accessible when disabled. Use boolean value true or false"
-  default     = true
-  type        = bool
-}
-
 variable "astronomer_version" {
   description = "Version of the Astronomer platform installed"
   default     = "0.10.2"
@@ -146,4 +134,9 @@ variable "db_replica_count" {
   description = "How many replicas for the database"
   default     = 1
   type        = number
+}
+
+variable "astronomer_helm_values" {
+  description = "Values in raw yaml to pass to Helm to override defaults in Astronomer Helm chart. Please see the Astronomer Helm chart's values.yaml for options. global.baseDomain is required. https://github.com/astronomer/astronomer/blob/master/values.yaml"
+  type        = string
 }

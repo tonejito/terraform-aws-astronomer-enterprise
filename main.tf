@@ -16,7 +16,6 @@ module "aws" {
   min_cluster_size              = var.min_cluster_size
   max_cluster_size              = var.max_cluster_size
   ten_dot_what_cidr             = var.ten_dot_what_cidr
-  cluster_type                  = var.cluster_type
   cluster_version               = var.cluster_version
   worker_instance_type          = var.worker_instance_type
   db_instance_type              = var.db_instance_type
@@ -54,15 +53,16 @@ module "system_components" {
 module "astronomer" {
   dependencies = [module.system_components.depended_on]
   source       = "astronomer/astronomer/kubernetes"
-  version      = "1.0.8"
+  version      = "1.1.55"
+
   # source                = "../terraform-kubernetes-astronomer"
-  cluster_type          = var.cluster_type
-  private_load_balancer = var.private_load_balancer
-  astronomer_version    = var.astronomer_version
-  base_domain           = module.aws.base_domain
-  db_connection_string  = module.aws.db_connection_string
-  tls_cert              = var.tls_cert == "" ? module.aws.tls_cert : var.tls_cert
-  tls_key               = var.tls_key == "" ? module.aws.tls_key : var.tls_key
+  astronomer_version   = var.astronomer_version
+  db_connection_string = module.aws.db_connection_string
+  tls_cert             = var.tls_cert == "" ? module.aws.tls_cert : var.tls_cert
+  tls_key              = var.tls_key == "" ? module.aws.tls_key : var.tls_key
+
+  # Configuration for the Astronomer platform
+  astronomer_helm_values = var.astronomer_helm_values
 }
 
 data "aws_lambda_invocation" "elb_name" {
