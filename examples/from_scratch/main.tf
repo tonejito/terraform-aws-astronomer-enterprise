@@ -31,6 +31,11 @@ module "astronomer_aws_from_scratch" {
   enable_bastion     = true
   enable_windows_box = var.enable_windows_box
 
+  astronomer_helm_values = <<EOM
+  global:
+    baseDomain: ${var.deployment_id}.astronomer-development.com
+  EOM
+
   # Choose tags for the AWS resources
   tags = {
     "CI" = "true"
