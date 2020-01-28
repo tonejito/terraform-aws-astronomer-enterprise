@@ -34,6 +34,7 @@ module "astronomer_aws_from_scratch" {
   astronomer_helm_values = <<EOM
   global:
     baseDomain: ${var.deployment_id}.astronomer-development.com
+    tlsSecret: "astronomer-tls"
   EOM
 
   # Choose tags for the AWS resources
