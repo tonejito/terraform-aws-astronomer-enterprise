@@ -1,6 +1,6 @@
 module "aws" {
   source  = "astronomer/astronomer-aws/aws"
-  version = "1.1.101"
+  version = "1.1.105"
   # source                        = "../terraform-aws-astronomer-aws"
   deployment_id                 = var.deployment_id
   admin_email                   = var.email
@@ -53,21 +53,21 @@ module "system_components" {
 module "astronomer" {
   dependencies = [module.system_components.depended_on]
   source       = "astronomer/astronomer/kubernetes"
-  version      = "1.1.55"
+  version      = "1.1.59"
+  # source               = "../terraform-kubernetes-astronomer"
 
-  # source                = "../terraform-kubernetes-astronomer"
   astronomer_version   = var.astronomer_version
   db_connection_string = module.aws.db_connection_string
   tls_cert             = var.tls_cert == "" ? module.aws.tls_cert : var.tls_cert
   tls_key              = var.tls_key == "" ? module.aws.tls_key : var.tls_key
 
   # Configuration for the Astronomer platform
-  astronomer_helm_values = var.astronomer_helm_values
+  astronomer_helm_values = local.astronomer_helm_values
 }
 
 data "aws_lambda_invocation" "elb_name" {
   depends_on    = [module.astronomer]
-  function_name = "${module.aws.elb_lookup_function_name}"
+  function_name = module.aws.elb_lookup_function_name
   input         = "{}"
 }
 
@@ -82,7 +82,7 @@ data "aws_route53_zone" "selected" {
 
 resource "aws_route53_record" "astronomer" {
   count   = var.create_record ? 1 : 0
-  zone_id = "${data.aws_route53_zone.selected[0].zone_id}"
+  zone_id = data.aws_route53_zone.selected[0].zone_id
   name    = "*.${var.deployment_id}.${data.aws_route53_zone.selected[0].name}"
   type    = "CNAME"
   ttl     = "30"

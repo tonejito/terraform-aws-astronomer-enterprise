@@ -3,7 +3,6 @@ name: terraform-aws-astronomer-enterprise
 
 steps:
 
-
 - name: lint
   image: hashicorp/terraform:light
   commands:

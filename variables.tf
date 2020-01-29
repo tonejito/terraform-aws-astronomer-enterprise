@@ -137,6 +137,7 @@ variable "db_replica_count" {
 }
 
 variable "astronomer_helm_values" {
+  default     = ""
   description = "Values in raw yaml to pass to Helm to override defaults in Astronomer Helm chart. Please see the Astronomer Helm chart's values.yaml for options. global.baseDomain is required. https://github.com/astronomer/astronomer/blob/master/values.yaml"
   type        = string
 }
