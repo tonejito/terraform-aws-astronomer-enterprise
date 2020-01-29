@@ -1,6 +1,6 @@
 module "aws" {
   source  = "astronomer/astronomer-aws/aws"
-  version = "1.1.105"
+  version = "1.1.116"
   # source                        = "../terraform-aws-astronomer-aws"
   deployment_id                 = var.deployment_id
   admin_email                   = var.email
@@ -20,6 +20,7 @@ module "aws" {
   worker_instance_type          = var.worker_instance_type
   db_instance_type              = var.db_instance_type
   db_replica_count              = var.db_replica_count
+  allow_public_load_balancers   = var.allow_public_load_balancers
   # It makes the installation easier to leave
   # this public, then just flip it off after
   # everything is deployed.

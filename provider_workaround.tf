@@ -5,13 +5,15 @@
 resource "local_file" "kubeconfig" {
   depends_on = [module.aws]
   content    = module.aws.kubeconfig
-  filename   = "${path.root}/kubeconfig"
+  filename   = "${path.root}/kubeconfig-${var.deployment_id}"
 }
 
 provider "kubernetes" {
-  version          = "~> 1.8"
-  config_path      = local_file.kubeconfig.filename
-  load_config_file = true
+  host                   = module.aws.kube_endpoint
+  cluster_ca_certificate = module.aws.kube_ca_certificate
+  token                  = module.aws.kube_auth_token
+  load_config_file       = false
+  version                = "~> 1.9"
 }
 
 provider "helm" {
@@ -20,7 +22,9 @@ provider "helm" {
   namespace       = "kube-system"
   install_tiller  = false
   kubernetes {
-    config_path      = local_file.kubeconfig.filename
-    load_config_file = true
+    host                   = module.aws.kube_endpoint
+    cluster_ca_certificate = module.aws.kube_ca_certificate
+    token                  = module.aws.kube_auth_token
+    load_config_file       = false
   }
 }

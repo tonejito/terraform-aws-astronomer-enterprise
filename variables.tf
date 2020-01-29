@@ -4,8 +4,14 @@ variable "route53_domain" {
 }
 
 variable "create_record" {
-  description = "The name of your public route53 hosted zone, does not include a trailing dot. Should match the domain. This is used to generate a certificate with let's encrypt"
+  description = "The name of your public Route 53 hosted zone, does not include a trailing dot. Should match the domain. This is used to generate a certificate with Let's Encrypt"
   default     = true
+  type        = bool
+}
+
+variable "allow_public_load_balancers" {
+  description = "Configuring this variable will allow for public load balancers to be created in the Kubernetes. You need to turn this on if you want to serve Astronomer publicly and you also need to configure nginx.privateLoadBalancer in the Astronomer Helm values."
+  default     = false
   type        = bool
 }
 
