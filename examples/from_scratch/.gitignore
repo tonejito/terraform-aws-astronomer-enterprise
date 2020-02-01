@@ -1,1 +1,2 @@
-backend.tf
+*
+!main.tf
