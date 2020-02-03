@@ -16,7 +16,8 @@ terraform init
 
 if [ $DESTROY -eq 1 ]; then
   terraform destroy --auto-approve -var "deployment_id=$DEPLOYMENT_ID" -refresh=false -lock=false --target=module.astronomer_aws_from_scratch.module.astronomer
-  sleep 15
+  terraform destroy --auto-approve -var "deployment_id=$DEPLOYMENT_ID" -refresh=false -lock=false --target=module.astronomer_aws_from_scratch.module.system_components
+  sleep 30
   terraform destroy --auto-approve -var "deployment_id=$DEPLOYMENT_ID" -refresh=false -lock=false
 else
   terraform apply --auto-approve -var "deployment_id=$DEPLOYMENT_ID"
