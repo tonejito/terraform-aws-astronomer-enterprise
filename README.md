@@ -8,7 +8,7 @@ Updates are not guaranteed to be non-interrupting. Always use Terraform best-pra
 
 - optional bastion
 - optional VPC and subnet creation
-- optional private management API
+- optional public or private for application load balancer
 
 ![Astronomer Private Cloud Architecture](images/Astronomer_AWS_Architecture_EE.svg)
 
@@ -39,7 +39,7 @@ Install the necessary tools:
 * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 * [AWS IAM Authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
 * [Terraform](https://www.terraform.io/downloads.html) *Use version 0.12.3 or later*
-* [Helm client](https://github.com/helm/helm#install) *Use version 2, 2.16.1 or later*
+* [Helm client](https://github.com/helm/helm#install) *Use version 2, 2.14.1 or later*
 * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) *Use the version appropriate for your Kubernetes cluster version*
 
 ## Installation
@@ -59,6 +59,8 @@ aws sts get-caller-identity
 ```
 
 ### Write the Terraform
+
+Read through this configuration and replace values where appropriate
 
 ```
 provider "aws" {
@@ -110,6 +112,7 @@ After the Terraform apply is complete in the next step, the platform will be run
 
 - Deploy into an existing VPC in your network (see options vpc_id, private_subnets, and db_subnets)
 - Deploy a Linux or Windows VM accessible from the public internet that can access the private Astronomer platform (see options enable_bastion and enable_windows_box). Windows will use RDP and Linux will use SSH. Both will be deployed with an IP whitelist only including the public IP address of where the Terraform is executed.
+- Deploy the Astronomer on a public endpoint, see below "Different VPC or network configuration"
 
 ### Run Terraform
 
@@ -195,6 +198,8 @@ EOF
 
 #### Different VPC or network configuration
 
+##### Deploy in your existing AWS network
+
 By default, a new VPC and subnets will be created. There are options to allow you to provide your own networks instead:
 
 - vpc_id
@@ -205,7 +210,9 @@ Make sure that your subnets and VPC are tagged as required by EKS.
 
 By default, a public subnet is created only to allow egress internet traffic. The cluster, database, and load balancer (where the application is accessed) are placed in the private networks by default. Options that can be changed from default that provision resources in the public subnet are enable_bastion and enable_windows_box. The Kubernetes API will be deployed into the public internet by default. This is to enable a one-click solution (deploy network, deploy Kubernetes in that network, deploy application on Kubernetes all in one go). Otherwise you have to deploy the VPC, networks, and Kubernetes, then deploy the rest executing Terraform from inside the VPC. It is best security practice to disable the public Kubernetes API when you are not using it. This can be accomplished using AWS EKS in the AWS console, this can be safely toggled to private in a non-interrupting fashion when Terraform is not being used. If you want to use Terraform again, just re-enable it. To use Terraform completely privately from scratch, you will need to deploy from an existing VPC into the same VPC.
 
-If you want to serve the platform itself publicly, then you need to configure both the infrastructure to allow this (setting up tags on the public subnets to allow the creation of load balancers) and configure the platform to deploy its load balancer into a public subnet.
+##### Deploy on public internet
+
+If you want to serve the platform itself publicly, then you need to configure both the infrastructure to allow this (setting up tags on the public subnets to allow the creation of load balancers) and configure the platform to deploy its load balancer into a public subnet. If you are using your own network, see above. If you are using Route 53 + Let's Encrypt automation, then the following configuration alone will work.
 
 Provide these options to the Astronomer enterprise module for public access to be enabled:
 ```
