@@ -60,7 +60,7 @@ aws sts get-caller-identity
 
 ### Write the Terraform
 
-Read through this configuration and replace values where appropriate
+Make a new directory to work in. Read through this configuration and replace values where appropriate, writing to a file "astronomer.tf"
 
 ```
 provider "aws" {
