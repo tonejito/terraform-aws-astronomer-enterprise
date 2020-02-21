@@ -1,7 +1,5 @@
 # Astronomer Enterprise
 
-[![Build Status](https://cloud.drone.io/api/badges/astronomer/terraform-aws-astronomer-enterprise/status.svg)](https://cloud.drone.io/astronomer/terraform-aws-astronomer-enterprise)
-
 Updates are not guaranteed to be non-interrupting. Always use Terraform best-practices when deploying updates by reviewing the Terraform "plan" and understanding the impact before applying.
 
 # Architecture
