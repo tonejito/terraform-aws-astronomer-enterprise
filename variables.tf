@@ -147,3 +147,15 @@ variable "astronomer_helm_values" {
   description = "Values in raw yaml to pass to Helm to override defaults in Astronomer Helm chart. Please see the Astronomer Helm chart's values.yaml for options. global.baseDomain is required. https://github.com/astronomer/astronomer/blob/master/values.yaml"
   type        = string
 }
+
+variable "engine_version" {
+  description = "Aurora database engine version."
+  type        = string
+  default     = "10.7"
+}
+
+variable "auto_minor_version_upgrade" {
+  description = "Determines whether minor engine upgrades will be performed automatically in the maintenance window for aurora db"
+  type        = bool
+  default     = false
+}

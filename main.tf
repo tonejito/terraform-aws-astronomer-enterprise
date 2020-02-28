@@ -20,6 +20,8 @@ module "aws" {
   worker_instance_type          = var.worker_instance_type
   db_instance_type              = var.db_instance_type
   db_replica_count              = var.db_replica_count
+  engine_version                = var.engine_version
+  auto_minor_version_upgrade    = var.auto_minor_version_upgrade
   allow_public_load_balancers   = var.allow_public_load_balancers
   # It makes the installation easier to leave
   # this public, then just flip it off after
