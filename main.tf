@@ -2,7 +2,7 @@ module "aws" {
   # source  = "astronomer/astronomer-aws/aws"
   # version = "1.1.101"
   # source                        = "./modules/terraform-aws-astronomer-aws"
-  source                        = "github.com/tonejito/terraform-aws-astronomer-aws?ref=Disable-aurora-upgrade"
+  source                        = "github.com/tonejito/terraform-aws-astronomer-aws?ref=Disable-aurora-upgrade_v1.1.101"
   deployment_id                 = var.deployment_id
   admin_email                   = var.email
   route53_domain                = var.route53_domain
